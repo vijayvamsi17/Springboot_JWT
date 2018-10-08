@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.jwtAuthentication.jwtAuthentication.model.User;
+import com.jwtAuthentication.jwtAuthentication.model.EmployeeLogin;
 
 public class UserPrincipal implements UserDetails {
 	
@@ -36,6 +37,12 @@ public class UserPrincipal implements UserDetails {
         this.authorities = authorities;
     }
     
+    public UserPrincipal(String username,String password, Collection<? extends GrantedAuthority> authorities) {
+        this.username = username;
+        this.password = password;
+        this.authorities = authorities;
+    }
+    
     public static UserPrincipal create(User user) {
         List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
         		
@@ -45,6 +52,15 @@ public class UserPrincipal implements UserDetails {
                 user.getName(),
                 user.getUsername(),
                 user.getEmail(),
+                user.getPassword(),
+                authorities
+        );
+    }
+    
+    public static UserPrincipal create2(EmployeeLogin user) {
+    	List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+        return new UserPrincipal(
+                user.getUsername(),
                 user.getPassword(),
                 authorities
         );

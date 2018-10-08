@@ -17,6 +17,8 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.jwtAuthentication.jwtAuthentication.routing.ThreadLocalStorage;
+
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	
 	private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
@@ -32,12 +34,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		
 		try {
             String jwt = getJwtFromRequest(req);
-
+            String db_client = getClientFromRequest(req);
+            System.out.println("Client Name: " + db_client);
+            ThreadLocalStorage.setTenantName(db_client);
+            
             if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
-                Long userId = tokenProvider.getUserIdFromJWT(jwt);
+                String userId = tokenProvider.getUserIdFromJWT(jwt);
 
-                UserDetails userDetails = customUserDetailsService.loadUserById(userId);
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, null);
+//                UserDetails userDetails = customUserDetailsService.loadUserByUsername(userId);
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userId, null, null);
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(req));
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -50,6 +55,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		
 	}
 	
+	private String getClientFromRequest(HttpServletRequest req) {
+		String db_client = req.getHeader("client_id");
+		
+		return db_client;
+	}
+
 	private String getJwtFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {

@@ -55,10 +55,9 @@ public class AuthController {
 		
 		System.out.println("Sign In api called");
 		
-		Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-					loginRequest.getUsernameOrEmail(),
-					loginRequest.getPassword()
-				));
+		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginRequest.getUsernameOrEmail(),loginRequest.getPassword());
+		
+		Authentication authentication = authenticationManager.authenticate(authenticationToken);
 		
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		

@@ -1,16 +1,11 @@
 package com.jwtAuthentication.jwtAuthentication.model;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.NaturalId;
-
-import com.jwtAuthentication.jwtAuthentication.model.audit.DateAudit;
 
 @Entity
 @Table(name = "users", uniqueConstraints = {
@@ -22,7 +17,7 @@ import com.jwtAuthentication.jwtAuthentication.model.audit.DateAudit;
         })
 })
 
-public class User extends DateAudit {
+public class User {
 	
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

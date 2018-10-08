@@ -7,7 +7,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jwtAuthentication.jwtAuthentication.model.EmployeeLogin;
 import com.jwtAuthentication.jwtAuthentication.model.User;
+import com.jwtAuthentication.jwtAuthentication.repository.EmpLoginRepository;
 import com.jwtAuthentication.jwtAuthentication.repository.UserRepository;
 
 @Service
@@ -15,19 +17,26 @@ public class CustomUserDetailsService implements UserDetailsService {
 	
 	@Autowired
     UserRepository userRepository;
+	
+	@Autowired
+	EmpLoginRepository empLoginRepository;
 
 	@Override
 	public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
 		
 		System.out.println("Load user name");
 		
-		User user = userRepository.findByUsernameOrEmail(usernameOrEmail, usernameOrEmail)
-                .orElseThrow(() -> 
-                        new UsernameNotFoundException("User not found with username or email : " + usernameOrEmail)
-               
+		EmployeeLogin user = empLoginRepository.findByUsername(usernameOrEmail).orElseThrow(() -> 
+                        new UsernameNotFoundException("User not found with username or email : " + usernameOrEmail)    
         );
+		
+//		User user = userRepository.findByUsername(usernameOrEmail).orElseThrow(() -> 
+//        	new UsernameNotFoundException("User not found with username or email : " + usernameOrEmail)    
+//		);
+		
+		System.out.println("user name found");
 
-        return UserPrincipal.create(user);
+        return UserPrincipal.create2(user);
 	}
 	
 	// This method is used by JWTAuthenticationFilter
